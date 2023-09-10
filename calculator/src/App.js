@@ -34,7 +34,10 @@ class Calculator extends React.Component {
       //handle number starts with zero
       else if ( expression.length > 1 & expression[0] == 0 & expression[1]!='.') {
         expression = expression.replace(expression[0], '')
-        console.log('0.')
+      }
+      //handle expressions starting with multiplication and divide
+      else if ( expression[0]=='*'|expression[0]=="/") {
+        expression = expression.replace(expression[0], '')
       }
       //handle digits starting with multiple zeros
       else if (expression === "00") {
@@ -44,7 +47,7 @@ class Calculator extends React.Component {
         expression = expression.replace(lastTwo, lastTwo[1])
       }
       else if(expression.length>20){
-        expression = "limit"
+        output = "DIGIT LIMIT MET"
       }
 
       //handle output
@@ -64,12 +67,15 @@ class Calculator extends React.Component {
         else if (output.includes("..")) {
           output = output.replace("..", '.')
         }
+        else if( output.length>18){
+          output = "DIGIT LIMIT MET"
+        }
       }
 
     }
 
     else {
-      //two handle next expression that starts with operation. it will continue the operation using the answer from the prev operation
+      //to handle next expression that starts with operation. it will continue the operation using the answer from the prev operation
       if ( lastTwo[1] == "+" | lastTwo[1] == "-" | lastTwo[1] == "*" | lastTwo[1] == "/") {
         var expression = this.state.answer.toString().concat(e.target.value)
         output = e.target.value
@@ -98,9 +104,13 @@ class Calculator extends React.Component {
 
     var expression = this.state.input;
     if (this.state.nextInput==false) {
-
+      var lastTwoChar = expression.slice(-2)
       var lastchar = expression.slice(-1)
-      if (lastchar == "+" | lastchar == "-" | lastchar == "*" | lastchar == "/") {
+      if (lastTwoChar == "*-" | lastTwoChar == "/-" ) {
+        expression = expression.replace(expression[expression.length - 1], '')
+        expression = expression.replace(expression[expression.length - 1], '')
+      }
+      else if (lastchar == "+" | lastchar == "-" | lastchar == "*" | lastchar == "/") {
         expression = expression.replace(expression[expression.length - 1], '')
       }
       var answer = eval(expression);
@@ -165,7 +175,7 @@ function CalculatorWrapper() {
 
   return (
     <div>
-      {isVisible && <p>This text will appear for 1 second.</p>}
+      {isVisible && <p>LIMIT</p>}
       <Calculator /> {/* Render your existing Calculator component */}
     </div>
   );
