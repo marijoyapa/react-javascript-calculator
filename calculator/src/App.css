@@ -4,6 +4,7 @@
   align-items: center;
   min-height: 100vh;
   background-color: #dedede;
+  font-family: "digital-7";
 
 }
 
@@ -19,12 +20,20 @@
   justify-content: right;
   align-items: center;
   margin-right: 5px;
-  height: 30px;
+  font-size: 24px;
+  height: 25px;
 }
+
+.expression{
+  font-size: 14px;
+  color: orange;
+  margin-top: 5px;
+  padding-bottom: 0;
+  height: 15px;
+}
+
 .digits {
   display: grid;
-  /* grid-auto-rows: 50px;
-  grid-auto-columns: 500px; */
   grid-template-columns:60px 60px 60px 60px;
   grid-template-rows: 50px 50px 50px 50px 50px;
   margin: 4px
@@ -35,9 +44,18 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  /* border-color: red; */
   border-style: none;
-  margin:1px
+  margin:1px;
+  font-family: "digital-7";
+  font-size: 19px;
+}
+
+.button:hover{
+  color: white;
+  border: solid;
+  border-color: gray;
+  border-width: 3px;
+  margin: 0.2px;
 
 }
 
@@ -46,7 +64,7 @@
 }
 
 .number {
-  background-color: white;
+  background-color: #6B6E70;
 }
 
 
