@@ -1,6 +1,6 @@
-import logo from './logo.svg';
 import './App.css';
-import React from 'react'
+import React, { useState, useEffect } from 'react';
+import './font/digital-7/digital-7.ttf';
 
 class Calculator extends React.Component {
   constructor(props) {
@@ -18,8 +18,9 @@ class Calculator extends React.Component {
 
   }
 
+
   storeExpression(e) {
-    var expression = this.state.input.concat(e.target.value)
+    var expression = this.state.input.toString().concat(e.target.value)
     var output = ""
     var input = e.target.value;
     var lastTwo = expression.slice(-2)
@@ -30,15 +31,22 @@ class Calculator extends React.Component {
         expression = expression.replace("..", '.')
       }
       //handle number starts with zero
-      else if (expression[0] == 0) {
+      else if (expression.length > 1 & expression[0] == 0 & expression[1] != '.') {
+        expression = expression.replace(expression[0], '')
+      }
+      //handle expressions starting with multiplication and divide
+      else if (expression[0] == '*' | expression[0] == "/") {
         expression = expression.replace(expression[0], '')
       }
       //handle digits starting with multiple zeros
       else if (expression === "00") {
         expression = "0"
       }
-      else if (lastTwo == "+-" | lastTwo == "+*" | lastTwo == "+/" | lastTwo == "-+" | lastTwo == "-*" | lastTwo == "-/" | lastTwo == "*+" | lastTwo == "*/" | lastTwo == "/+" | lastTwo == "++" | lastTwo == "--" | lastTwo == "**" | lastTwo == "//") {
+      else if (lastTwo == "+-" | lastTwo == "+*" | lastTwo == "+/" | lastTwo == "-+" | lastTwo == "-*" | lastTwo == "-/" | lastTwo == "*+" | lastTwo == "*/" | lastTwo == "/+" | lastTwo == "/*" | lastTwo == "++" | lastTwo == "--" | lastTwo == "**" | lastTwo == "//") {
         expression = expression.replace(lastTwo, lastTwo[1])
+      }
+      else if (expression.length > 20) {
+        output = "DIGIT LIMIT MET"
       }
 
       //handle output
@@ -49,16 +57,30 @@ class Calculator extends React.Component {
       else {
         output = this.state.output.concat(e.target.value)
         //to handle for expresssions starting with 0 and operations
-        if (output[0] == 0 | output[0] == "+" | output[0] == "-" | output[0] == "*" | output[0] == "/") {
+        if (output[0] == "+" | output[0] == "-" | output[0] == "*" | output[0] == "/") {
           output = output.replace(output[0], '')
         }
+        else if (output.length > 1 & output[0] == 0 & output[1] != '.') {
+          output = output.replace(output[0], '')
+        }
+        else if (output.includes("..")) {
+          output = output.replace("..", '.')
+        }
+        else if (output.length > 18) {
+          output = "DIGIT LIMIT MET"
+        }
       }
-
     }
 
     else {
-      output = "0"
-      expression = ""
+      //to handle next expression that starts with operation. it will continue the operation using the answer from the prev operation
+      if (lastTwo[1] == "+" | lastTwo[1] == "-" | lastTwo[1] == "*" | lastTwo[1] == "/") {
+        var expression = this.state.answer.toString().concat(e.target.value)
+        output = e.target.value
+      } else {
+        output = "0"
+        expression = e.target.value
+      }
     }
 
     this.setState({
@@ -77,18 +99,21 @@ class Calculator extends React.Component {
   calculate() {
 
     var expression = this.state.input;
-    console.log(expression.length)
-    if (this.state  .nextInput==false) {
-
+    if (this.state.nextInput == false) {
+      var lastTwoChar = expression.slice(-2)
       var lastchar = expression.slice(-1)
-      if (lastchar == "+" | lastchar == "-" | lastchar == "*" | lastchar == "/") {
-        expression = expression.replace(expression[expression.length - 1], '')
+      if (lastTwoChar == "*-" | lastTwoChar == "/-" | lastTwoChar == "+-" | lastTwoChar == "--") {
+        expression = expression.slice(0, -2)
+      }
+      else if (lastchar == "+" | lastchar == "-" | lastchar == "*" | lastchar == "/") {
+        expression = expression.slice(0, -1)
       }
       var answer = eval(expression);
       var input = expression.concat("=", answer)
       this.setState({
         input,
         output: answer,
+        answer,
         nextInput: true
       })
     }
@@ -101,8 +126,8 @@ class Calculator extends React.Component {
       <div className="app" >
         <div className="container">
           <section className="result">
-            <div className="output">{this.state.input}</div>
-            <div className="output" id="display">{this.state.output}</div>
+            <div className="output expression">{this.state.input}</div>
+            <div className="output answer" id="display">{this.state.output}</div>
           </section>
           <section className="digits">
             <button className="button ac red" onClick={this.clearExpression} id="clear">AC</button>
@@ -127,9 +152,27 @@ class Calculator extends React.Component {
       </div>
     )
   }
+}
 
+function CalculatorWrapper() {
+  const [isVisible, setIsVisible] = useState(true);
 
+  useEffect(() => {
+    // Schedule a function to hide the text after 1 second
+    const timer = setTimeout(() => {
+      setIsVisible(false);
+    }, 1000);
 
+    // Clean up the timer when the component unmounts
+    return () => clearTimeout(timer);
+  }, []);
+
+  return (
+    <div>
+      {isVisible && <p>LIMIT</p>}
+      <Calculator /> {/* Render your existing Calculator component */}
+    </div>
+  );
 }
 
 
