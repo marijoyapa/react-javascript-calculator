@@ -5,7 +5,6 @@
   min-height: 100vh;
   background-color: #dedede;
   font-family: "digital-7";
-
 }
 
 .container {
@@ -19,10 +18,10 @@
 .output{
   display: flex;
   justify-content: right;
+  text-align: right;
   align-items: center;
   margin-right: 5px;
   font-size: 24px;
-  /* height: 25px; */
   width: 240px;
 }
 
@@ -31,13 +30,10 @@
   color: orange;
   margin-top: 5px;
   margin-left: 5px;
-  
+  padding-right: 0px;
   min-height: 15px;
   padding-bottom: 0;
-  /* padding-right: 10px; */
-  /* height: 15px; */
-  width: 240px;
-  /* inline-size: 150px; */
+  width: 235px;
   overflow-wrap: break-word;
   word-break: break-all;
 }
@@ -47,7 +43,6 @@
   grid-template-columns:60px 60px 60px 60px;
   grid-template-rows: 50px 50px 50px 50px 50px;
   margin: 4px
-
 }
 
 .button {
@@ -67,7 +62,6 @@
   border-color: gray;
   border-width: 3px;
   margin: 0.2px;
-
 }
 
 .operator {

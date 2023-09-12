@@ -10,12 +10,22 @@ class Calculator extends React.Component {
       input: "",
       output: "0",
       answer: "",
-      nextInput: false
+      display: "",
+      nextInput: false, 
+      limitReached: false
     }
     this.storeExpression = this.storeExpression.bind(this);
     this.clearExpression = this.clearExpression.bind(this);
     this.calculate = this.calculate.bind(this);
 
+  }
+  // Add a componentDidUpdate method to mimic the useEffect behavior
+  componentDidUpdate() {
+    if (this.state.limitReached) {
+      setTimeout(() => {
+        this.setState({ limitReached: false });
+      }, 1000);
+    }
   }
 
 
@@ -24,6 +34,7 @@ class Calculator extends React.Component {
     var output = ""
     var input = e.target.value;
     var lastTwo = expression.slice(-2)
+    var limitReached = false
     if (this.state.nextInput == false) {
       //handle input
       //handle multiple decimal points
@@ -45,9 +56,7 @@ class Calculator extends React.Component {
       else if (lastTwo == "+-" | lastTwo == "+*" | lastTwo == "+/" | lastTwo == "-+" | lastTwo == "-*" | lastTwo == "-/" | lastTwo == "*+" | lastTwo == "*/" | lastTwo == "/+" | lastTwo == "/*" | lastTwo == "++" | lastTwo == "--" | lastTwo == "**" | lastTwo == "//") {
         expression = expression.replace(lastTwo, lastTwo[1])
       }
-      else if (expression.length > 20) {
-        output = "DIGIT LIMIT MET"
-      }
+      
 
       //handle output
       //handle when an operation is clicked
@@ -66,8 +75,10 @@ class Calculator extends React.Component {
         else if (output.includes("..")) {
           output = output.replace("..", '.')
         }
-        else if (output.length > 18) {
-          output = "DIGIT LIMIT MET"
+        else if (output.length > 15) {
+          limitReached = true
+          output = output.slice(0, 15)
+
         }
       }
     }
@@ -86,7 +97,8 @@ class Calculator extends React.Component {
     this.setState({
       input: expression,
       output,
-      nextInput: false
+      nextInput: false,
+      limitReached
     })
   }
 
@@ -110,6 +122,9 @@ class Calculator extends React.Component {
       }
       var answer = eval(expression);
       var input = expression.concat("=", answer)
+      if (answer.length>15) {
+        answer=answer.splice(0, 15)
+      }
       this.setState({
         input,
         output: answer,
@@ -127,7 +142,7 @@ class Calculator extends React.Component {
         <div className="container">
           <section className="result">
             <div className="output expression">{this.state.input}</div>
-            <div className="output answer" id="display">{this.state.output}</div>
+            <div className="output answer" id="display"> {this.state.limitReached ? "DIGIT LIMIT MET" : this.state.output}</div>
           </section>
           <section className="digits">
             <button className="button ac red" onClick={this.clearExpression} id="clear">AC</button>
@@ -153,28 +168,6 @@ class Calculator extends React.Component {
     )
   }
 }
-
-function CalculatorWrapper() {
-  const [isVisible, setIsVisible] = useState(true);
-
-  useEffect(() => {
-    // Schedule a function to hide the text after 1 second
-    const timer = setTimeout(() => {
-      setIsVisible(false);
-    }, 1000);
-
-    // Clean up the timer when the component unmounts
-    return () => clearTimeout(timer);
-  }, []);
-
-  return (
-    <div>
-      {isVisible && <p>LIMIT</p>}
-      <Calculator /> {/* Render your existing Calculator component */}
-    </div>
-  );
-}
-
 
 
 export default Calculator;
